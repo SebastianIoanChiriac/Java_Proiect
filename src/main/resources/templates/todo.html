@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Registration and Login System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+        <a class="nav-link active" aria-current="page" th:href="@{/logout}"
+           >Logout</a>
+    </div>
+</nav>
+<div class="container w-50">
+    <div class="text-center" style="margin-top:100px">
+        <h1 th:text="${welcomeMessage}"></h1>
+    </div>
+    <div class="d-flex flex-row justify-content-between" style="margin-top:50px;">
+        <form th:action="@{/todo/add-todo-item}" role="form" th:object="${toDoItem}" method="post" style="width:90%">
+            <div class="input-group">
+                <input type="text" id="input_item" class="form-control" name="item" th:field="*{item}">
+                <button type="submit" class="btn btn-secondary btn-lg" id="btn_add"
+                        disabled>Add
+                </button>
+            </div>
+        </form>
+        <!--        form for delete-->
+        <form th:action="@{/todo/todoItem}" role="form" method="get" th:object="${toDoItemsToDelete}">
+            <input type="text" name="toDoItemsToDelete" id="toDoItemsToDelete" th:field="*{list}" th:value="*{list}"
+            hidden >
+            <button type="submit" id="btn_delete" class="btn btn-secondary btn-lg"
+                    >Delete
+            </button>
+        </form>
+        <!--        form for delete-->
+        <!--        form for update-->
+        <form th:action="@{/todo/todoItemUpdate}" role="form" method="get" th:object="${toDoItemsToUpdate}">
+            <input type="text" name="toDoItemsToUpdate" id="toDoItemsToUpdate" th:field="*{list}" th:value="*{list}"
+            hidden >
+            <button type="submit" id="btn_update" class="btn btn-secondary btn-lg"
+                  >Update
+            </button>
+        </form>
+        <!--        form for update-->
+
+    </div>
+    <!--    -->
+    <div th:if="${emptyToDoList==true}" style="margin-top:50px;" class="d-flex flex-row justify-content-center">
+        <h3>Your to-do list is empty.</h3>
+    </div>
+    <!--    -->
+    <div th:if="${emptyToDoList==false} or ${param.successDelete}" style="margin-top:50px">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
+            </thead>
+            <tbody>
+            <tr th:each="toDoItem: ${toDoItemList}">
+                <td><input type="checkbox" th:id="${toDoItem.id}" class="checkbox"></td>
+                <td><input type="text" th:value="${toDoItem.item}" class="input_item w-100" th:id="${toDoItem.id}"
+                           ></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+var btnDelete = document.getElementById("btn_delete")
+btnDelete.onmouseover=deleteSelectedToDoItems
+
+var checkboxes=document.getElementsByClassName("checkbox")
+
+function deleteSelectedToDoItems(){
+let array=[]
+for(let i=1;i<=checkboxes.length;i++){
+if(checkboxes[i-1].checked){
+let id=checkboxes[i-1].id
+console.log(id)
+array.push(id)
+}
+}
+document.getElementById("toDoItemsToDelete").value=array
+console.log(document.getElementById("toDoItemsToDelete").value)
+}
+
+
+var btnUpdate = document.getElementById("btn_update")
+btnUpdate.onmouseover=updateSelectedToDoItems
+
+var inputs=document.getElementsByClassName("input_item")
+
+function updateSelectedToDoItems(){
+let list=[]
+for(let i=1;i<=inputs.length;i++){
+let id=inputs[i-1].id
+list.push(id);
+list.push(inputs[i-1].value)
+}
+
+document.getElementById("toDoItemsToUpdate").value=list
+}
+
+input_item.oninput=function disableOrUnableBtnDelete(){
+console.log(input_item.value)
+if(input_item.value === "") {btn_add.disabled=true}
+else {btn_add.disabled=false}
+}
+
+
+</script>
+
+<style>
+    .input_item{
+    background:transparent;
+    border:none;
+    }
+
+body{
+  background: url(/images/light.jpg) ;
+  background-size: 100%;
+}
+
+input[type='checkbox']:checked {
+  accent-color: #A0522D;
+}
+
+#btn_delete{
+background-color: #A0522D;color:white;margin-left:30px;width:100px;
+}
+#btn_update{
+background-color: #A0522D;color:white;margin-left:30px;width:100px;
+}
+
+#btn_add{
+background-color: black;
+color:white;
+}
+.nav-link{
+color:white;font-size:120%;
+}
+.navbar{
+background-color:black;
+}
+
+.input_item{
+font-size:20px;
+}
+
+.checkbox{
+transform: scale(1.8);
+}
+
+
+
+
+
+
+
+
+
+
+</style>
